@@ -4,6 +4,9 @@ use std::error::Error;
 const WIN: u32 = 6;
 const DRAW: u32 = 3;
 const LOSS: u32 = 0;
+const ROCK: u32 = 1;
+const PAPER: u32 = 2;
+const SCISSORS: u32 = 3;
 
 pub fn run(contents: String) -> Result<(), Box<dyn Error>> {
     let total_score = get_total_score(&contents);
@@ -12,16 +15,17 @@ pub fn run(contents: String) -> Result<(), Box<dyn Error>> {
 }
 
 fn score_round(round: (&str, &str)) -> u32 {
-    let score_outcome = match round {
-        ("A", "X") | ("B", "Y") | ("C", "Z") => DRAW,
-        ("A", "Y") | ("B", "Z") | ("C", "X") => WIN,
-        ("A", "Z") | ("B", "X") | ("C", "Y") => LOSS,
+    let score_shape = match round {
+        ("A", "Y") | ("B", "X") | ("C", "Z") => ROCK,
+        ("A", "Z") | ("B", "Y") | ("C", "X") => PAPER,
+        ("A", "X") | ("B", "Z") | ("C", "Y") => SCISSORS,
         _ => panic!("Unknown error!"),
     };
-    let score_shape = match round.1 {
-        "X" => 1,
-        "Y" => 2,
-        _ => 3,
+    let score_outcome = match round.1 {
+        "X" => LOSS,
+        "Y" => DRAW,
+        "Z" => WIN,
+        _ => panic!("Unknown input!"),
     };
 
     score_shape + score_outcome
@@ -51,13 +55,13 @@ mod tests {
     #[test]
     fn test_score_round() {
         let round = ("A", "Y");
-        assert_eq!(8, score_round(round));
+        assert_eq!(4, score_round(round));
     }
     #[test]
     fn test_get_total_score() {
         let rounds = "A Y
 B X
 C Z";
-        assert_eq!(15, get_total_score(rounds));
+        assert_eq!(12, get_total_score(rounds));
     }
 }
