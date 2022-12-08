@@ -24,7 +24,7 @@ pub fn get_top_line(stacks: HashMap<u32, Vec<char>>, instructions: &str) -> Stri
     topline
 }
 
-fn parse_instruction(instruction: &str) -> (u32, u32, u32) {
+pub fn parse_instruction(instruction: &str) -> (u32, u32, u32) {
     instruction
         .split_whitespace()
         .skip(1)
