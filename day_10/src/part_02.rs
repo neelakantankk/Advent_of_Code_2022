@@ -29,7 +29,7 @@ fn draw_if_visible(display: &mut [Vec<&'static str>], cycle_count: isize, regist
     if current_pixel >= (register_x - 1) && current_pixel <= (register_x + 1) {
         let row = (cycle_count / ROW_LENGTH) as usize;
         let column = (cycle_count % ROW_LENGTH) as usize;
-        display[row][column] = "|";
+        display[row][column] = "\u{2588}";
     };
 }
 
