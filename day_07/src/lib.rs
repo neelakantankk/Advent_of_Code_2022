@@ -30,6 +30,8 @@ pub fn run(contents: String) -> Result<(), Box<dyn Error>> {
         "The total size of directories less than 100,000: {}",
         size_of_dirs
     );
+    let minimum_size = get_dir_to_delete(&filesystem);
+    println!("Minimum directory size: {}", minimum_size);
     Ok(())
 }
 
@@ -122,4 +124,26 @@ fn get_size_of_dirs(filesystem: &HashMap<String, FileSystemItem>) -> usize {
         }
     }
     total_size
+}
+
+fn get_dir_to_delete(filesystem: &HashMap<String, FileSystemItem>) -> usize {
+    const TOTAL_DISK_SPACE: usize = 70000000;
+    const REQUIRED_SPACE: usize = 30000000;
+
+    let space_of_root = filesystem.get("/").unwrap().get_size(filesystem);
+    let free_space = TOTAL_DISK_SPACE - space_of_root;
+    let required_to_delete = REQUIRED_SPACE - free_space;
+    let mut min_size = space_of_root;
+    for value in filesystem.values() {
+        match value {
+            FileSystemItem::Dir { children: _ } => {
+                let dir_size = value.get_size(filesystem);
+                if dir_size > required_to_delete && dir_size < min_size {
+                    min_size = dir_size;
+                }
+            }
+            FileSystemItem::File { size: _ } => {}
+        }
+    }
+    min_size
 }
