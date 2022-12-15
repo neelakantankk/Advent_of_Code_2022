@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
+use std::iter::zip;
 
 pub fn run(contents: String) -> Result<(), Box<dyn Error>> {
     let moves = parse_content(&contents);
@@ -7,6 +8,11 @@ pub fn run(contents: String) -> Result<(), Box<dyn Error>> {
     println!(
         "Number of positions visited at least once: {}",
         visited_positions
+    );
+    let rope_visited_positions = get_count_of_positions_rope(&moves);
+    println!(
+        "Number of positions visited by rope tail: {}",
+        rope_visited_positions
     );
     Ok(())
 }
@@ -37,6 +43,20 @@ fn get_count_of_visited_positions(moves: &[(isize, isize)]) -> usize {
     }
 
     position_tail.len()
+}
+
+fn get_count_of_positions_rope(moves: &[(isize, isize)]) -> usize {
+    let mut rope = vec![(0,0);10];
+    let mut position_tail: HashSet<(isize,isize)> = HashSet::new();
+    for instruction in moves.iter() {
+        rope[0] = (rope[0].0 + instruction.0, rope[0].1 + instruction.1);
+        for (i,j) in zip(0..9,1..10) {
+            rope[j] = get_tail_position(rope[i],rope[j]);
+        }
+        position_tail.insert(rope[9]);
+    }
+    position_tail.len()
+    
 }
 
 fn get_tail_position(head: (isize, isize), tail: (isize, isize)) -> (isize, isize) {
@@ -76,6 +96,16 @@ D 1
 L 5
 R 2"
     }
+    fn make_data_p2() -> &'static str {
+        "R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20"
+    }
 
     #[test]
     fn test_get_count_of_visited_positions() {
@@ -84,4 +114,11 @@ R 2"
         let positions_visited = get_count_of_visited_positions(&moves);
         assert_eq!(13, positions_visited);
     }
+    #[test]
+     fn test_get_rope_positions() {
+         let data = make_data_p2();
+         let moves = parse_content(data);
+         let positions_visited = get_count_of_positions_rope(&moves);
+         assert_eq!(36,positions_visited);
+     }
 }
