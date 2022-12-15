@@ -46,17 +46,16 @@ fn get_count_of_visited_positions(moves: &[(isize, isize)]) -> usize {
 }
 
 fn get_count_of_positions_rope(moves: &[(isize, isize)]) -> usize {
-    let mut rope = vec![(0,0);10];
-    let mut position_tail: HashSet<(isize,isize)> = HashSet::new();
+    let mut rope = vec![(0, 0); 10];
+    let mut position_tail: HashSet<(isize, isize)> = HashSet::new();
     for instruction in moves.iter() {
         rope[0] = (rope[0].0 + instruction.0, rope[0].1 + instruction.1);
-        for (i,j) in zip(0..9,1..10) {
-            rope[j] = get_tail_position(rope[i],rope[j]);
+        for (i, j) in zip(0..9, 1..10) {
+            rope[j] = get_tail_position(rope[i], rope[j]);
         }
         position_tail.insert(rope[9]);
     }
     position_tail.len()
-    
 }
 
 fn get_tail_position(head: (isize, isize), tail: (isize, isize)) -> (isize, isize) {
@@ -115,10 +114,10 @@ U 20"
         assert_eq!(13, positions_visited);
     }
     #[test]
-     fn test_get_rope_positions() {
-         let data = make_data_p2();
-         let moves = parse_content(data);
-         let positions_visited = get_count_of_positions_rope(&moves);
-         assert_eq!(36,positions_visited);
-     }
+    fn test_get_rope_positions() {
+        let data = make_data_p2();
+        let moves = parse_content(data);
+        let positions_visited = get_count_of_positions_rope(&moves);
+        assert_eq!(36, positions_visited);
+    }
 }
